@@ -1,6 +1,7 @@
 import express from "express";
 import { config as configHandlebars } from "./config/handlebars.config.js";
 import { config as configWebsocket } from "./config/websocket.config.js";
+import { connectDB } from "./config/mongoose.config.js";
 
 // Importación de enrutadores
 import orderRouter from "./routes/order.router.js";
@@ -8,9 +9,15 @@ import skuRouter from "./routes/sku.router.js";
 import productRouter from "./routes/product.router.js";
 import cartRouter from "./routes/cart.router.js";
 import routerViewHome from "./routes/home.view.router.js";
+import routerStudents from "./routes/students.router.js";
+
+
 
 // Se crea una instancia de la aplicación Express
 const app = express();
+
+// Conexión con la Base de Datos del Cloud de MongoDB
+connectDB();
 
 // Se define el puerto en el que el servidor escuchará las solicitudes
 const PORT = 8080;
@@ -33,6 +40,9 @@ app.use("/api/sku", skuRouter);
 app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
 app.use("/", routerViewHome);
+app.use("/api/students", routerStudents);
+app.use("/", routerViewHome);
+
 
 // Control de rutas inexistentes
 app.use("*", (req, res) => {
