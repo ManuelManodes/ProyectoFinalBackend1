@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "nombre_sku": "Laptop Pro 15",
+        "precio": 1500,
+        "disponibilidad": true,
+        "thumbnail": "laptop_pro_15.jpg"
+    },
+    {
+        "id": 2,
+        "nombre_sku": "Monitor UltraWide 27",
+        "precio": 300,
+        "disponibilidad": true,
+        "thumbnail": "monitor_ultrawide_27.jpg"
+    },
+    {
+        "id": 3,
+        "nombre_sku": "Teclado Mecánico RGB",
+        "precio": 120,
+        "disponibilidad": false,
+        "thumbnail": "teclado_mecanico_rgb.jpg"
+    }
+]

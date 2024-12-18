@@ -1,0 +1,76 @@
+[
+	{
+		"id": 1,
+		"title": "Laptop Gamer",
+		"description": "Laptop de alto rendimiento para videojuegos y trabajos exigentes.",
+		"code": "LAP001",
+		"price": 2000,
+		"status": true,
+		"stock": 50,
+		"category": "Computadoras",
+		"thumbnails": [
+			"laptop1.jpg",
+			"laptop2.jpg"
+		]
+	},
+	{
+		"id": 2,
+		"title": "Smartphone Pro",
+		"description": "Smartphone con cámara avanzada y pantalla de alta resolución.",
+		"code": "SMT001",
+		"price": 999,
+		"status": true,
+		"stock": 40,
+		"category": "Teléfonos",
+		"thumbnails": [
+			"smartphone1.jpg"
+		]
+	},
+	{
+		"id": 3,
+		"title": "Auriculares Inalámbricos",
+		"description": "Auriculares con cancelación de ruido y excelente calidad de sonido.",
+		"code": "AUD001",
+		"price": 199.99,
+		"status": true,
+		"stock": 100,
+		"category": "Accesorios",
+		"thumbnails": [
+			"headphones1.jpg",
+			"headphones2.jpg"
+		]
+	},
+	{
+		"id": 4,
+		"title": "Iphone 99 ProMax",
+		"description": "Iphone de dudosa procedencia fabricado en la nación comunista de China bajo cuestionables jornadas de trabajo.",
+		"code": "IP0099",
+		"price": 90,
+		"status": true,
+		"stock": 100,
+		"category": "Teléfonos",
+		"thumbnails": []
+	},
+	{
+		"id": 6,
+		"title": "Teclado mecánico edición EVA00",
+		"description": "Teclado Gamer RGB Óptico ROG Strix Scope RX EVA-02 Edition, para jugadores de FPS, con diseño inspirado en EVA, switches mecánicos ópticos ROG RX, iluminación RGB Aura Sync integral, resistencia al agua y al polvo IP57, passthrough USB 2.0 y placa superior de aleación.",
+		"code": "EV001",
+		"price": 500,
+		"status": true,
+		"stock": 100,
+		"category": "Periféricos",
+		"thumbnails": []
+	},
+	{
+		"id": 7,
+		"title": "Mouse gamer inalámbrico",
+		"description": "Razer Viper V3 HyperSpeed - Mouse inalámbrico para juegos de deportes electrónicos: peso ligero de 2.89 oz - Batería de hasta 280 horas - Sensor óptico de 30 K DPI - Interruptores mecánicos Gen-2 - 8",
+		"code": "MG0023",
+		"price": 90,
+		"status": true,
+		"stock": 25,
+		"category": "Periféricos",
+		"thumbnails": []
+	}
+]

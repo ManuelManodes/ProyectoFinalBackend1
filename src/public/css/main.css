@@ -1,0 +1,262 @@
+/* Estilos generales para el cuerpo */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Estilos para el encabezado */
+header {
+    background-color: #f8f8f8;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Estilos para las secciones */
+section {
+    margin-bottom: 40px;
+}
+
+/* Estilos para la tabla */
+table {
+    width: 100%;
+    font-family: Arial, sans-serif;
+    border-collapse: separate; /* Cambiar a 'separate' para que se vean los bordes redondeados */
+    border-spacing: 0; /* Eliminar el espacio entre celdas */
+    border: 0.5px solid #dddddd; /* Borde principal de la tabla */
+    border-radius: 10px; /* Bordes redondeados */
+    overflow: hidden; /* Asegura que el contenido respete los bordes redondeados */
+}
+
+/* Estilos para las celdas y encabezados */
+th, td {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    text-align: left;
+}
+
+/* Encabezados con fondo */
+th {
+    background-color: #bebdbde5; /* Fondo para los encabezados */
+}
+
+/* Alternar colores para las filas */
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+
+/* Estilos para los formularios */
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Estilos para las cajas de texto */
+input[type="text"],
+input[type="number"],
+textarea {
+    width: 60%; /* Ajusta el ancho al 60% del contenedor */
+    padding: 8px; /* Espaciado interno */
+    box-sizing: border-box; /* Incluye el relleno y borde en el tamaño total */
+    border: 1px solid #cccccc; /* Borde claro */
+    border-radius: 5px; /* Bordes redondeados */
+    font-family: Arial, sans-serif; /* Tipo de letra */
+    font-size: 14px; /* Tamaño de fuente */
+    transition: border-color 0.3s ease; /* Transición para el cambio de borde */
+}
+
+/* Estilo para la caja activa (cuando el usuario hace clic) */
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+    border-color: #4CAF50; /* Cambia a un verde más destacado */
+    outline: none; /* Elimina el borde predeterminado del navegador */
+}
+
+/* Estilo para los checkboxes */
+input[type="checkbox"] {
+    margin-left: 0;
+}
+
+
+/* Estilos generales de botones */
+.button-style {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Estilo específico para el botón de guardar */
+.button-style[value="Guardar"],
+.button-style:not(.delete-button) {
+    background-color: #4CAF50; /* Verde */
+    color: white;
+}
+
+.button-style[value="Guardar"]:hover,
+.button-style:not(.delete-button):hover {
+    background-color: #45a049;
+}
+
+/* Estilo específico para el botón de eliminar */
+.delete-button {
+    background-color: red; /* Rojo */
+    color: white;
+}
+
+.delete-button:hover {
+    background-color: darkred;
+}
+
+/* Personalizar el foco de los botones */
+.button-style:focus,
+.delete-button:focus {
+    outline: none; /* Elimina el outline predeterminado */
+    box-shadow: 0 0 0 2px rgba(190, 194, 190, 0.952); /* Verde con opacidad */
+    /* Puedes ajustar el color y el tamaño según tus necesidades */
+}
+
+
+/* Estilos para mensajes de error */
+#error-message {
+    color: red;
+    font-weight: bold;
+}
+/* Estilos para el modal */
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5); /* Fondo semitransparente */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* Centrado vertical y horizontal */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Ancho del modal */
+    max-width: 400px;
+    text-align: center;
+    border-radius: 5px;
+}
+
+.modal-actions {
+    margin-top: 20px;
+}
+
+.modal-actions button {
+    margin: 0 10px;
+}
+
+/* Diseño de formulario con dos columnas */
+.two-column-form .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+    gap: 20px; /* Espacio entre columnas y filas */
+    align-items: center; /* Alinea verticalmente al centro */
+}
+
+/* Campos de ancho completo */
+.two-column-form .full-width {
+    grid-column: 1 / span 2; /* Ocupa ambas columnas */
+}
+
+/* Estilo para etiquetas */
+.two-column-form label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Campos de entrada */
+.two-column-form input[type="text"],
+.two-column-form input[type="number"],
+.two-column-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box; /* Evita desbordamientos */
+}
+
+/* Textarea con altura adecuada */
+.two-column-form textarea {
+    resize: none; /* Deshabilita el redimensionado manual */
+    height: 100px; /* Altura predeterminada */
+}
+
+/* Checkbox alineado */
+.two-column-form input[type="checkbox"] {
+    width: auto;
+    margin-top: 5px;
+}
+
+/* Botón de envío */
+.two-column-form .button-style {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%; /* Ocupa todo el ancho */
+}
+
+.two-column-form .button-style:hover {
+    background-color: #45a049;
+}
+
+/* Responsividad: pantallas pequeñas */
+@media (max-width: 768px) {
+    .two-column-form .form-grid {
+        grid-template-columns: 1fr; /* Cambia a una sola columna en dispositivos pequeños */
+    }
+
+    .two-column-form .full-width {
+        grid-column: 1 / -1; /* Ocupa todo el ancho */
+    }
+}
+/* Personalización de botones en el modal */
+#confirm-delete-yes {
+    background-color: #d60f0f; /* Verde */
+    color: rgb(255, 255, 255);
+}
+
+#confirm-delete-yes:hover {
+    background-color: #630303;
+}
+
+#confirm-delete-no {
+    background-color: rgb(225, 223, 223); /* Rojo */
+    color: white;
+}
+
+#confirm-delete-no:hover {
+    background-color: rgb(102, 102, 102);
+}
+
+/* Cambiar el color del borde para el campo específico al estar enfocado */
+#input-product-id:focus {
+    border-color: #ed0e0e; /* Gris muy claro */
+       outline: none; /* Asegura que no haya outline predeterminado */
+}

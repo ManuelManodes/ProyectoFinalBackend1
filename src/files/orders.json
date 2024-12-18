@@ -1,0 +1,28 @@
+[
+    {
+        "id": 1,
+        "sku_list": [
+            {
+                "sku": 1,
+                "quantity": 2
+            },
+            {
+                "sku": 2,
+                "quantity": 1
+            }
+        ],
+        "cliente": "Empresa ABC",
+        "fecha_pedido": "2024-11-01"
+    },
+    {
+        "id": 2,
+        "sku_list": [
+            {
+                "sku": 3,
+                "quantity": 5
+            }
+        ],
+        "cliente": "Tech Solutions",
+        "fecha_pedido": "2024-11-05"
+    }
+]

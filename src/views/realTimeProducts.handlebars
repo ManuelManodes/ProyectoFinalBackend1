@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Productos en tiempo real</title>
+    <!-- Enlace al archivo CSS externo -->
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <header>
+        <h1>Home - Productos en tiempo real</h1>
+    </header>
+
+    <main>
+        <!-- Sección de productos -->
+        <section>
+            <h3>Productos</h3>
+            <div>
+                <table id="products-table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Código</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Categoría</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Aquí se agregarán las filas de productos -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Formulario de ingreso de productos -->
+        <section>
+            <h3>Formulario ingreso Productos</h3>
+            <form id="products-form" class="two-column-form">
+                <div class="form-grid">
+                    <!-- Campo 1: Nombre -->
+                    <div class="form-group">
+                        <label for="title">Nombre:</label>
+                        <input type="text" id="title" name="title" placeholder="Ingrese el nombre" tabindex="1" required>
+                    </div>
+                    <!-- Campo 2: Código -->
+                    <div class="form-group">
+                        <label for="code">Código:</label>
+                        <input type="text" id="code" name="code" placeholder="Ingrese el código único" tabindex="2" required>
+                    </div>
+                    <!-- Campo 3: Descripción (textarea) -->
+                    <div class="form-group full-width">
+                        <label for="description">Descripción:</label>
+                        <textarea id="description" name="description" placeholder="Ingrese la descripción" tabindex="3" required></textarea>
+                    </div>
+                    <!-- Campo 4: Categoría -->
+                    <div class="form-group">
+                        <label for="category">Categoría:</label>
+                        <input type="text" id="category" name="category" placeholder="Ingrese la categoría" tabindex="4" required>
+                    </div>
+                    <!-- Campo 5: ¿Está activo? -->
+                    <div class="form-group">
+                        <label for="status">¿Está activo?</label>
+                        <input type="checkbox" id="status" name="status" tabindex="5">
+                    </div>
+                    <!-- Campo 6: Precio -->
+                    <div class="form-group">
+                        <label for="price">Precio:</label>
+                        <input type="number" id="price" name="price" placeholder="Ingrese el precio" tabindex="6" required>
+                    </div>
+                    <!-- Campo 7: Stock -->
+                    <div class="form-group">
+                        <label for="stock">Stock:</label>
+                        <input type="number" id="stock" name="stock" placeholder="Ingrese el stock" tabindex="7" required>
+                    </div>
+                    <!-- Campo Opcional: Thumbnails (Si es necesario) -->
+                    <!--
+                    <div class="form-group">
+                        <label for="thumbnails">Thumbnails:</label>
+                        <input type="text" id="thumbnails" name="thumbnails" placeholder="Ingrese URLs separadas por comas" tabindex="8">
+                    </div>
+                    -->
+                </div>
+                <!-- Botón de envío -->
+                <div class="form-group full-width">
+                    <input type="submit" class="button-style products-form" value="Guardar" tabindex="8">
+                </div>
+                <!-- Añadido para mostrar mensajes de error o éxito -->
+                <p id="error-message"></p>
+            </form>
+        </section>
+
+
+        <!-- Sección para eliminar producto -->
+        <section>
+            <h3>Eliminar producto</h3>
+            <form id="delete-product-form">
+                <div class="form-group">
+                    <label for="input-product-id">ID del producto a eliminar:</label>
+                    <input type="number" id="input-product-id" placeholder="Ingrese el ID del producto" required>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="button-style delete-button" id="btn-delete-product">Eliminar</button>
+                </div>
+                <p id="delete-error-message"></p> <!-- Añadido para mensajes de error -->
+            </form>
+        </section>
+    </main>
+
+    <!-- Incluye los scripts necesarios -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/api/public/js/products.socket.js"></script>
+
+    <!-- Modal de Confirmación de Eliminación -->
+    <div id="confirm-delete-modal" class="modal" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+        <div class="modal-content">
+            <h2 id="modal-title">Confirmar Eliminación</h2>
+            <p>¿Estás seguro de que deseas eliminar este producto?</p>
+            <div class="modal-actions">
+                <button id="confirm-delete-yes" class="button-style">Sí</button>
+                <button id="confirm-delete-no" class="button-style">No</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal de confirmación -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content">
+            <p id="confirm-message"></p>
+            <div class="modal-actions">
+                <button id="confirm-yes" class="button-style delete-button">Sí</button>
+                <button id="confirm-no" class="button-style">No</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
