@@ -1,7 +1,8 @@
+// Módulo 'path': sirve para trabajar con rutas de archivos y directorios
 import path from "path";
 
 // Define la ruta raíz del proyecto
-const ROOT_PATH = path.resolve(); 
+const ROOT_PATH = path.resolve(); // Devuelve la ruta absoluta al directorio actual
 
 // Define la ruta 'src' del proyecto
 const SRC_PATH = path.join(ROOT_PATH, "src");

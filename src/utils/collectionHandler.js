@@ -1,3 +1,4 @@
+// Genera un nuevo ID incrementando el ID máximo actual en 1
 export const generateId = (collection) => {
     console.log(collection);
 
@@ -6,7 +7,6 @@ export const generateId = (collection) => {
     }
 
     let maxId = 0;
-
     collection.forEach((item) => {
         if (item.id > maxId) {
             maxId = item.id;

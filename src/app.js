@@ -8,19 +8,17 @@ import orderRouter from "./routes/order.router.js";
 import skuRouter from "./routes/sku.router.js";
 import productRouter from "./routes/product.router.js";
 import cartRouter from "./routes/cart.router.js";
-import routerViewHome from "./routes/home.view.router.js";
-import routerStudents from "./routes/students.router.js";
-
-
+import homeViewRouter from "./routes/home.view.router.js";
+import studentRoutes from "./routes/students.router.js";
 
 // Se crea una instancia de la aplicación Express
 const app = express();
 
-// Conexión con la Base de Datos del Cloud de MongoDB
+// Conexión con la Base de Datos de MongoDB
 connectDB();
 
 // Se define el puerto en el que el servidor escuchará las solicitudes
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 
 // Declaración de archivos estáticos desde la carpeta 'public'
 app.use("/api/public", express.static("./src/public"));
@@ -34,15 +32,15 @@ app.use(express.json());
 // Configuración del motor de plantillas
 configHandlebars(app);
 
-// Declaración de rutas
-app.use("/api/order", orderRouter);
-app.use("/api/sku", skuRouter);
+// Declaración de rutas de la API
+app.use("/api/orders", orderRouter);
+app.use("/api/skus", skuRouter);
 app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
-app.use("/", routerViewHome);
-app.use("/api/students", routerStudents);
-app.use("/", routerViewHome);
+app.use("/api/students", studentRoutes);
 
+// Rutas para vistas
+app.use("/", homeViewRouter);
 
 // Control de rutas inexistentes
 app.use("*", (req, res) => {

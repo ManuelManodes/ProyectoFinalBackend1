@@ -7,7 +7,7 @@ const validateFilePathAndName = (filepath, filename) => {
     if (!filename) throw new Error(`El nombre del archivo ${filename} no fue proporcionado.`);
 };
 
-// Leé el contenido de un archivo
+// Lee el contenido de un archivo
 export const readJsonFile = async (filepath, filename) => {
     validateFilePathAndName(filepath, filename);
 
@@ -36,12 +36,9 @@ export const writeJsonFile = async (filepath, filename, content) => {
     }
 };
 
-
-
 // Elimina un archivo
 export const deleteFile = async (filepath, filename) => {
     validateFilePathAndName(filepath, filename);
-
     try {
         await fs.promises.unlink(path.join(filepath, filename));
     } catch (error) {

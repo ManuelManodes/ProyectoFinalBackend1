@@ -1,18 +1,19 @@
-import { connect, Types } from "mongoose";
+import mongoose from "mongoose";
+const { connect, connection, Types } = mongoose;
 
-// Conecta con la base de datos MongoDB
 export const connectDB = async () => {
     const URL = "mongodb+srv://manuelmanodescofre:Manodes3000@clusterproyectofinalman.f0jes.mongodb.net/ClusterProyectoFinalManuelManodes";
-
     try {
         await connect(URL);
         console.log("Conectado a MongoDB");
     } catch (error) {
-        console.log("Error al conectar con MongoDB", error.message);
+        console.error("Error al conectar con MongoDB", error.message);
+        process.exit(1); // Salir del proceso si falla la conexión
     }
 };
 
-// Verifica que un ID sea válido con el formato de ObjectId de MongoDB
-export const isValidID = (id) => {
-    return Types.ObjectId.isValid(id);
-};
+// Escuchar eventos de la conexión
+connection.on("error", (err) => console.error("Error de conexión a MongoDB:", err.message));
+
+// Exportar la función isValidID
+export const isValidID = (id) => Types.ObjectId.isValid(id);

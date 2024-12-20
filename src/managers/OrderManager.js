@@ -1,128 +1,179 @@
-// Importaciones de módulos y utilidades necesarias
-import paths from "../utils/paths.js";
-import { readJsonFile, writeJsonFile } from "../utils/fileHandler.js";
-import { generateId } from "../utils/collectionHandler.js";
 import ErrorManager from "./ErrorManager.js";
+import { isValidID } from "../config/mongoose.config.js";
+import OrderModel from "../models/order.model.js";
+import ProductModel from "../models/product.model.js";
 
 export default class OrderManager {
-    #jsonFilename;
-    #orders;
-
+    #order;
+    #product;
 
     constructor() {
-        this.#jsonFilename = "orders.json"; 
+        this.#order = OrderModel;
+        this.#product = ProductModel;
     }
 
-    /**
-     * Método privado para encontrar una orden por su ID
-     * @param {number|string} id 
-     * @returns {object} 
-     * @throws {ErrorManager} 
-     */
+    // Busca una orden por su 'id' (no por _id de Mongoose)
     async #findOneById(id) {
-        this.#orders = await this.getAll(); 
-        const orderFound = this.#orders.find((item) => item.id === Number(id)); 
+        if (!isValidID(id)) {
+            throw new ErrorManager("ID inválido", 400);
+        }
+
+        const orderFound = await this.#order.findOne({ id: id });
 
         if (!orderFound) {
-            throw new ErrorManager("ID no encontrado", 404); 
+            throw new ErrorManager("Orden no encontrada", 404);
         }
 
         return orderFound;
     }
 
-    /**
-     * Método para obtener todas las órdenes
-     * @returns {Array} 
-     * @throws {ErrorManager} 
-     */
-    async getAll() {
-        try {
-            this.#orders = await readJsonFile(paths.files, this.#jsonFilename); 
-            return this.#orders; 
-        } catch (error) {
-            throw new ErrorManager(error.message, error.code); 
+    // Valida que todos los SKUs en sku_list existan en ProductModel y tengan stock suficiente
+    async #validateSkuList(sku_list) {
+        for (const item of sku_list) {
+            const skuCode = item.sku.trim().toUpperCase(); // Asegura la consistencia
+            const product = await this.#product.findOne({ code: skuCode });
+            if (!product) {
+                throw new ErrorManager(`SKU ${item.sku} no existe`, 400);
+            }
+            if (product.stock < item.quantity) {
+                throw new ErrorManager(`Stock insuficiente para SKU ${item.sku}`, 400);
+            }
         }
     }
+    
 
-    /**
-     * Método para obtener una orden específica por su ID
-     * @param {number|string} id 
-     * @returns {object} 
-     * @throws {ErrorManager} 
-     */
-    async getOneById(id) {
+    // Obtiene una lista de órdenes aplicando una serie de filtros opcionales
+    async getAll(params) {
         try {
-            const orderFound = await this.#findOneById(id); 
-            return orderFound; 
-        } catch (error) {
-            throw new ErrorManager(error.message, error.code); 
-        }
-    }
+            const { page = 1, limit = 10, ...filters } = params;
+            const query = {};
 
-    /**
-     * Método para insertar una nueva orden
-     * @param {object} data 
-     * @param {Array} data.sku_list 
-     * @param {string} data.cliente 
-     * @param {string} data.fecha_pedido 
-     * @returns {object} 
-     * @throws {ErrorManager} 
-     */
-    async insertOne(data) {
-        try {
-            const { sku_list, cliente, fecha_pedido } = data; 
-
-            // Verifica que todos los datos obligatorios estén presentes
-            if (!sku_list || !cliente || !fecha_pedido) {
-                throw new ErrorManager("Faltan datos obligatorios", 400); 
+            if (filters.cliente) {
+                query.cliente = { $regex: filters.cliente, $options: 'i' }; // Búsqueda insensible a mayúsculas
             }
 
-            // Crea la nueva orden con un ID único y formatea la lista de SKUs
-            const order = {
-                id: generateId(await this.getAll()), 
-                sku_list: sku_list.map((item) => ({
-                    sku: Number(item.sku), 
-                    quantity: Number(item.quantity), 
-                })),
-                cliente, 
-                fecha_pedido, 
+            if (filters.fecha_pedido) {
+                const fecha = new Date(filters.fecha_pedido);
+                if (isNaN(fecha)) {
+                    throw new ErrorManager("Fecha de pedido inválida", 400);
+                }
+                // Filtrar por fecha exacta (sin tiempo)
+                const start = new Date(fecha.setHours(0,0,0,0));
+                const end = new Date(fecha.setHours(23,59,59,999));
+                query.fecha_pedido = { $gte: start, $lte: end };
+            }
+
+            const options = {
+                page: parseInt(page),
+                limit: parseInt(limit),
+                sort: { createdAt: -1 },
             };
 
-            this.#orders.push(order); 
-            await writeJsonFile(paths.files, this.#jsonFilename, this.#orders); 
-
-            return order; 
+            return await this.#order.paginate(query, options);
         } catch (error) {
-            throw new ErrorManager(error.message, error.code); 
+            throw ErrorManager.handleError(error);
         }
     }
 
-    /**
-     * Método para agregar un SKU a una orden específica
-     * @param {number|string} orderId 
-     * @param {number|string} skuId 
-     * @param {number} [quantity=1] 
-     * @returns {object} 
-     * @throws {ErrorManager} 
-     */
-    async addSkuToOrder(orderId, skuId, quantity = 1) {
+    // Obtiene una orden específica por su 'id'
+    async getOneById(id) {
         try {
-            const orderFound = await this.#findOneById(orderId); 
-            const skuIndex = orderFound.sku_list.findIndex((item) => item.sku === Number(skuId)); 
+            return await this.#findOneById(id);
+        } catch (error) {
+            throw ErrorManager.handleError(error);
+        }
+    }
 
-            if (skuIndex >= 0) {
-                orderFound.sku_list[skuIndex].quantity += quantity; 
-            } else {
-                orderFound.sku_list.push({ sku: Number(skuId), quantity }); 
+    // Inserta una nueva orden
+    async insertOne(data) {
+        try {
+            // Validar unicidad del 'id'
+            const existingOrder = await this.#order.findOne({ id: data.id });
+            if (existingOrder) {
+                throw new ErrorManager("El ID de la orden ya existe", 400);
             }
 
-            const index = this.#orders.findIndex((item) => item.id === Number(orderId)); 
-            this.#orders[index] = orderFound; 
-            await writeJsonFile(paths.files, this.#jsonFilename, this.#orders); 
+            // Validar existencia y stock de SKUs
+            await this.#validateSkuList(data.sku_list);
 
-            return orderFound; 
+            // Actualizar stock de productos
+            for (const item of data.sku_list) {
+                const skuCode = item.sku.trim().toUpperCase(); // Asegura la consistencia
+                await this.#product.findOneAndUpdate(
+                    { code: skuCode },
+                    { $inc: { stock: -item.quantity } },
+                    { new: true }
+                );
+            }
+
+
+            const order = await this.#order.create(data);
+            return order;
         } catch (error) {
-            throw new ErrorManager(error.message, error.code); 
+            throw ErrorManager.handleError(error);
+        }
+    }
+
+    // Actualiza una orden existente por su 'id'
+    async updateOneById(id, data) {
+        try {
+            const orderFound = await this.#findOneById(id);
+
+            // Si se actualiza sku_list, es necesario ajustar el stock
+            if (data.sku_list) {
+                // Restaurar stock de la sku_list existente
+                for (const item of orderFound.sku_list) {
+                    const skuCode = item.sku.trim().toUpperCase(); // Asegura la consistencia
+                    await this.#product.findOneAndUpdate(
+                        { code: skuCode },
+                        { $inc: { stock: item.quantity } },
+                        { new: true }
+                    );
+                }
+
+                // Validar nueva sku_list
+                await this.#validateSkuList(data.sku_list);
+
+                // Actualizar stock con la nueva sku_list
+                for (const item of data.sku_list) {
+                    const skuCode = item.sku.trim().toUpperCase(); // Asegura la consistencia
+                    await this.#product.findOneAndUpdate(
+                        { code: skuCode },
+                        { $inc: { stock: -item.quantity } },
+                        { new: true }
+                    );
+                }
+            }
+
+            const updatedOrder = await this.#order.findOneAndUpdate({ id: id }, data, { new: true, runValidators: true });
+            return updatedOrder;
+        } catch (error) {
+            throw ErrorManager.handleError(error);
+        }
+    }
+
+    // Elimina una orden por su 'id' y restaura el stock de los productos
+    async deleteOneById(id) {
+        try {
+            const order = await this.#findOneById(id);
+
+            // Restaurar stock de productos
+            // Restaurar stock de productos
+            for (const item of order.sku_list) {
+                const skuCode = item.sku.trim().toUpperCase(); // Asegura la consistencia
+                await this.#product.findOneAndUpdate(
+                    { code: skuCode },
+                    { $inc: { stock: item.quantity } },
+                    { new: true }
+                );
+            }   
+
+
+
+            await order.deleteOne();
+            return { message: "Orden eliminada exitosamente" };
+        } catch (error) {
+            throw ErrorManager.handleError(error);
         }
     }
 }

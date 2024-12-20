@@ -19,7 +19,7 @@ export default class ErrorManager extends Error {
 
         // Verifica si es un código 11000, que indica un error de duplicidad en MongoDB
         if (error.code === 11000) {
-            return new ErrorManager(error.message, 400);
+            return new ErrorManager(error.message, 409);
         }
 
         // Para cualquier otro tipo de error, envía el mensaje y un código 500

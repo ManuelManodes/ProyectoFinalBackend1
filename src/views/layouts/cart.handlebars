@@ -1,0 +1,77 @@
+<!-- views/cart.handlebars -->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras</title>
+    <link rel="stylesheet" href="/api/public/css/main.css">
+</head>
+<body>
+    <header>
+        <h1>Tu Carrito de Compras</h1>
+        <nav>
+            <a href="/api/products/view">Volver a Productos</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Mensajes de éxito o error -->
+        {{#if message}}
+            <p style="color: green; font-weight: bold;">{{message}}</p>
+        {{/if}}
+
+        {{#if errorMessage}}
+            <p style="color: red; font-weight: bold;">{{errorMessage}}</p>
+        {{/if}}
+
+        {{#if cartItems.length}}
+            <table id="cart-table">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Descripción</th>
+                        <th>Código</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                        <th>Total</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each cartItems}}
+                        <tr>
+                            <td>{{this.product.title}}</td>
+                            <td>{{this.product.description}}</td>
+                            <td>{{this.product.code}}</td>
+                            <td>${{this.product.price}}</td>
+                            <td>
+                                <form action="/api/carts/view" method="POST" style="display: inline;">
+                                    <input type="hidden" name="_method" value="PUT">
+                                    <input type="hidden" name="sku" value="{{this.product.code}}">
+                                    <input type="number" name="quantity" value="{{this.quantity}}" min="1" max="{{this.product.stock}}">
+                                    <button type="submit">Actualizar</button>
+                                </form>
+                            </td>
+                            <td>${{this.total}}</td>
+                            <td>
+                                <form action="/api/carts/remove/{{this.product.code}}" method="POST" style="display: inline;">
+                                    <button type="submit">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+
+            <h3>Total: ${{totalAmount}}</h3>
+
+            <!-- Botón para proceder al pago (implementación pendiente) -->
+            <button onclick="alert('Proceder al pago')">Proceder al Pago</button>
+        {{else}}
+            <p>Tu carrito está vacío.</p>
+        {{/if}}
+    </main>
+</body>
+</html>

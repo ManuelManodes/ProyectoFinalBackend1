@@ -1,15 +1,82 @@
-<header>
-<h1>Home</h1>
-</header>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Productos y Carrito</title>
+    <link rel="stylesheet" href="/api/public/css/main.css">
+</head>
+<body>
+    <header>
+        <h1>Productos Disponibles</h1>
+        <!-- Enlace para ver el contenido del carrito -->
+        <nav>
+            <a href="/api/carts/view">Ver Carrito</a>
+        </nav>
+    </header>
 
-<main>
-    <section>
-        <h3>Productos</h3>
-        <div>
-            <ul id="products-list"></ul>
+    <main>
+        <!-- Mensajes de éxito o error (opcional) -->
+        {{#if message}}
+        <p style="color: green; font-weight: bold;">{{message}}</p>
+        {{/if}}
+
+        {{#if errorMessage}}
+        <p style="color: red; font-weight: bold;">{{errorMessage}}</p>
+        {{/if}}
+
+        <!-- Formulario para navegar por las páginas -->
+        <form method="GET" action="/api/products/view" style="margin-bottom: 10px;">
+            <input type="number" name="page" placeholder="Página" min="1" required>
+            <button type="submit">Ir</button>
+        </form>
+
+        <table id="products-table">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Descripción</th>
+                    <th>Código</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Categoría</th>
+                    <th>Agregar al Carrito</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each products.docs}}
+                <tr>
+                    <td>{{this.title}}</td>
+                    <td>{{this.description}}</td>
+                    <td>{{this.code}}</td>
+                    <td>{{this.price}}</td>
+                    <td>{{this.stock}}</td>
+                    <td>{{this.category}}</td>
+                    <td>
+                        <!-- Formulario para agregar este producto al carrito -->
+                        <form action="/api/carts/{{cartId}}/product/{{this._id}}" method="POST" style="display:inline;">
+                            <input type="number" name="quantity" value="1" min="1" max="{{this.stock}}" required>
+                            <button type="submit">Agregar</button>
+                        </form>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+
+        <!-- Controles de paginación -->
+        <div style="margin-top: 10px;">
+            {{#if products.hasPrevPage}}
+                <a href="/api/products/home?page={{products.prevPage}}">Anterior</a>
+            {{/if}}
+            
+            <span style="margin:0 10px;">Página {{products.page}} de {{products.totalPages}}</span>
+            
+            {{#if products.hasNextPage}}
+                <a href="/api/products/home?page={{products.nextPage}}">Siguiente</a>
+            {{/if}}
         </div>
-        <button id="btn-refresh-products-list" class="button-style">Actualizar</button>
-    </section>
-</main>
 
-<script src="/api/public/js/products.js"></script>
+    </main>
+</body>
+</html>

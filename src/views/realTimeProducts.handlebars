@@ -3,140 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Productos en tiempo real</title>
-    <!-- Enlace al archivo CSS externo -->
-    <link rel="stylesheet" href="main.css">
+    <title>Gestión de Productos - Tiempo Real</title>
+    <link rel="stylesheet" href="/api/public/css/main.css">
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- canvas-confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 </head>
 <body>
     <header>
-        <h1>Home - Productos en tiempo real</h1>
+        <h1>Gestión de Productos</h1>
     </header>
 
     <main>
         <!-- Sección de productos -->
         <section>
             <h3>Productos</h3>
-            <div>
-                <table id="products-table">
-                    <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Nombre</th>
-                            <th>Descripción</th>
-                            <th>Código</th>
-                            <th>Precio</th>
-                            <th>Stock</th>
-                            <th>Categoría</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Aquí se agregarán las filas de productos -->
-                    </tbody>
-                </table>
+            <!-- Formulario para buscar por página -->
+            <form method="GET" action="/api/products/view" style="margin-bottom: 10px;">
+                <input type="number" name="page" placeholder="Página" min="1" required>
+                <button type="submit">Ir</button>
+            </form>
+
+            <table id="products-table">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Descripción</th>
+                        <th>Código</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Categoría</th>
+                        <th>Acción</th>
+                        <th>Editar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each products.docs}}
+                    <tr>
+                        <td>{{this.title}}</td>
+                        <td>{{this.description}}</td>
+                        <td>{{this.code}}</td>
+                        <td>{{this.price}}</td>
+                        <td>{{this.stock}}</td>
+                        <td>{{this.category}}</td>
+                        <td><button class="delete-btn" data-id="{{this._id}}">Eliminar</button></td>
+                        <td><a href="/api/products/{{this._id}}/edit">Editar</a></td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+
+            <!-- Controles de paginación -->
+            <div style="margin-top: 10px;">
+                {{#if products.hasPrevPage}}
+                    <a href="/api/products/view?page={{products.prevPage}}">Anterior</a>
+                {{/if}}
+                
+                <span style="margin:0 10px;">Página {{products.page}} de {{products.totalPages}}</span>
+                
+                {{#if products.hasNextPage}}
+                    <a href="/api/products/view?page={{products.nextPage}}">Siguiente</a>
+                {{/if}}
             </div>
         </section>
 
         <!-- Formulario de ingreso de productos -->
         <section>
-            <h3>Formulario ingreso Productos</h3>
-            <form id="products-form" class="two-column-form">
-                <div class="form-grid">
-                    <!-- Campo 1: Nombre -->
-                    <div class="form-group">
-                        <label for="title">Nombre:</label>
-                        <input type="text" id="title" name="title" placeholder="Ingrese el nombre" tabindex="1" required>
-                    </div>
-                    <!-- Campo 2: Código -->
-                    <div class="form-group">
-                        <label for="code">Código:</label>
-                        <input type="text" id="code" name="code" placeholder="Ingrese el código único" tabindex="2" required>
-                    </div>
-                    <!-- Campo 3: Descripción (textarea) -->
-                    <div class="form-group full-width">
-                        <label for="description">Descripción:</label>
-                        <textarea id="description" name="description" placeholder="Ingrese la descripción" tabindex="3" required></textarea>
-                    </div>
-                    <!-- Campo 4: Categoría -->
-                    <div class="form-group">
-                        <label for="category">Categoría:</label>
-                        <input type="text" id="category" name="category" placeholder="Ingrese la categoría" tabindex="4" required>
-                    </div>
-                    <!-- Campo 5: ¿Está activo? -->
-                    <div class="form-group">
-                        <label for="status">¿Está activo?</label>
-                        <input type="checkbox" id="status" name="status" tabindex="5">
-                    </div>
-                    <!-- Campo 6: Precio -->
-                    <div class="form-group">
-                        <label for="price">Precio:</label>
-                        <input type="number" id="price" name="price" placeholder="Ingrese el precio" tabindex="6" required>
-                    </div>
-                    <!-- Campo 7: Stock -->
-                    <div class="form-group">
-                        <label for="stock">Stock:</label>
-                        <input type="number" id="stock" name="stock" placeholder="Ingrese el stock" tabindex="7" required>
-                    </div>
-                    <!-- Campo Opcional: Thumbnails (Si es necesario) -->
-                    <!--
-                    <div class="form-group">
-                        <label for="thumbnails">Thumbnails:</label>
-                        <input type="text" id="thumbnails" name="thumbnails" placeholder="Ingrese URLs separadas por comas" tabindex="8">
-                    </div>
-                    -->
-                </div>
-                <!-- Botón de envío -->
-                <div class="form-group full-width">
-                    <input type="submit" class="button-style products-form" value="Guardar" tabindex="8">
-                </div>
-                <!-- Añadido para mostrar mensajes de error o éxito -->
-                <p id="error-message"></p>
+            <h3>Crear Producto</h3>
+            <form action="/api/products" method="POST">
+                <label for="id">ID:</label>
+                <input type="number" id="id" name="id" required>
+
+                <label for="title">Título:</label>
+                <input type="text" id="title" name="title" required>
+
+                <label for="description">Descripción:</label>
+                <textarea id="description" name="description" required></textarea>
+
+                <label for="code">Código:</label>
+                <input type="text" id="code" name="code" required>
+
+                <label for="price">Precio:</label>
+                <input type="number" id="price" name="price" step="0.01" required>
+
+                <label for="status">Estado:</label>
+                <input type="checkbox" id="status" name="status">
+
+                <label for="stock">Stock:</label>
+                <input type="number" id="stock" name="stock" required>
+
+                <label for="category">Categoría:</label>
+                <input type="text" id="category" name="category" required>
+
+                <label for="thumbnails">Miniaturas (URLs separadas por comas):</label>
+                <input type="text" id="thumbnails" name="thumbnails">
+
+                <button type="submit">Guardar</button>
             </form>
         </section>
 
-
-        <!-- Sección para eliminar producto -->
-        <section>
-            <h3>Eliminar producto</h3>
-            <form id="delete-product-form">
-                <div class="form-group">
-                    <label for="input-product-id">ID del producto a eliminar:</label>
-                    <input type="number" id="input-product-id" placeholder="Ingrese el ID del producto" required>
-                </div>
-                <div class="form-group">
-                    <button type="button" class="button-style delete-button" id="btn-delete-product">Eliminar</button>
-                </div>
-                <p id="delete-error-message"></p> <!-- Añadido para mensajes de error -->
-            </form>
-        </section>
     </main>
 
-    <!-- Incluye los scripts necesarios -->
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/api/public/js/products.socket.js"></script>
+    <script>
+        const message = "{{message}}";
+        const errorMessage = "{{errorMessage}}";
 
-    <!-- Modal de Confirmación de Eliminación -->
-    <div id="confirm-delete-modal" class="modal" role="dialog" aria-labelledby="modal-title" aria-modal="true">
-        <div class="modal-content">
-            <h2 id="modal-title">Confirmar Eliminación</h2>
-            <p>¿Estás seguro de que deseas eliminar este producto?</p>
-            <div class="modal-actions">
-                <button id="confirm-delete-yes" class="button-style">Sí</button>
-                <button id="confirm-delete-no" class="button-style">No</button>
-            </div>
-        </div>
-    </div>
+        if (message) {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: message,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Ok'
+            }).then(() => {
+                // Una vez que el usuario cierra el SweetAlert, lanzamos el confeti
+                const duration = 3 * 1000; // 3 segundos de confeti
+                const end = Date.now() + duration;
 
+                (function frame() {
+                    // Lanza confeti desde la izquierda
+                    confetti({
+                        particleCount: 3,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0 }
+                    });
+                    // Lanza confeti desde la derecha
+                    confetti({
+                        particleCount: 3,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1 }
+                    });
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                }());
+            });
+        }
 
-    <!-- Modal de confirmación -->
-    <div id="confirm-modal" class="modal">
-        <div class="modal-content">
-            <p id="confirm-message"></p>
-            <div class="modal-actions">
-                <button id="confirm-yes" class="button-style delete-button">Sí</button>
-                <button id="confirm-no" class="button-style">No</button>
-            </div>
-        </div>
-    </div>
+        if (errorMessage) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Ok'
+            });
+        }
+
+        // Lógica para eliminar un producto
+        document.addEventListener("DOMContentLoaded", () => {
+            const deleteButtons = document.querySelectorAll(".delete-btn");
+            deleteButtons.forEach(button => {
+                button.addEventListener("click", async () => {
+                    const productId = button.getAttribute("data-id");
+
+                    const result = await Swal.fire({
+                        title: '¿Seguro que quieres eliminar este producto?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    });
+
+                    if (result.isConfirmed) {
+                        try {
+                            const response = await fetch(`/api/products/${productId}`, {
+                                method: "DELETE"
+                            });
+
+                            const data = await response.json();
+                            if (data.status === "success") {
+                                Swal.fire('Eliminado', data.payload.message, 'success').then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire('Error', data.message, 'error');
+                            }
+                        } catch (error) {
+                            Swal.fire('Error', 'No se pudo eliminar el producto', 'error');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Producto</title>
+    <link rel="stylesheet" href="/api/public/css/main.css">
+</head>
+<body>
+    <header>
+        <h1>Editar Producto</h1>
+    </header>
+
+    <main>
+        <section>
+            <!-- El action utiliza el _id del producto para la ruta POST /api/products/:id -->
+            <form action="/api/products/{{product._id}}" method="POST">
+                <label for="title">Título:</label>
+                <!-- El campo title se llena con product.title -->
+                <input type="text" id="title" name="title" value="{{product.title}}" required>
+
+                <label for="description">Descripción:</label>
+                <!-- El textarea muestra product.description entre las etiquetas -->
+                <textarea id="description" name="description" required>{{product.description}}</textarea>
+
+                <label for="code">Código:</label>
+                <input type="text" id="code" name="code" value="{{product.code}}" required>
+
+                <label for="price">Precio:</label>
+                <input type="number" id="price" name="price" step="0.01" value="{{product.price}}" required>
+
+                <label for="status">Estado:</label>
+                <!-- Si product.status es true, marca el checkbox -->
+                <input type="checkbox" id="status" name="status" {{#if product.status}}checked{{/if}}>
+
+                <label for="stock">Stock:</label>
+                <input type="number" id="stock" name="stock" value="{{product.stock}}" required>
+
+                <label for="category">Categoría:</label>
+                <input type="text" id="category" name="category" value="{{product.category}}" required>
+
+                <label for="thumbnails">Miniaturas (URLs separadas por comas):</label>
+                <input type="text" id="thumbnails" name="thumbnails" value="{{product.thumbnails}}">
+
+                <button type="submit">Guardar Cambios</button>
+            </form>
+
+            <!-- Enlace para volver a la vista principal -->
+            <p><a href="/api/products/view">Volver a la lista de productos</a></p>
+        </section>
+    </main>
+</body>
+</html>
